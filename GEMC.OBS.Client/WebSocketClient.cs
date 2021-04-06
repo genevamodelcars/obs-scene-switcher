@@ -18,7 +18,7 @@ namespace GEMC.OBS.Client
 
         public void Connect()
         {
-            using (var socket = new WebSocket(url: this.address, onMessage: OnMessage, onError: OnError))
+            using (WebSocket socket = new WebSocket(url: this.address, onMessage: OnMessage, onError: OnError))
             {
                 socket.Connect().Wait();
             }

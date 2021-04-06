@@ -80,6 +80,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="websocket-sharp.clone, Version=1.0.2.39869, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Solutions\packages\websocket-sharp.clone.3.0.0\lib\net45\websocket-sharp.clone.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Plugin.cs" />
@@ -88,6 +91,16 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GEMC.OBS.Client\GEMC.OBS.Client.csproj">
+      <Project>{C19098C5-042A-4B4B-935A-67AFB9E46B66}</Project>
+      <Name>GEMC.OBS.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GEMC.OBS.Common\GEMC.OBS.Common.csproj">
+      <Project>{734ba398-2e1e-4ab4-9a84-f5f8b667372a}</Project>
+      <Name>GEMC.OBS.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
