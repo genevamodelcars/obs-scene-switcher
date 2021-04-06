@@ -28,7 +28,7 @@ namespace GEMC.OBS.Standalone
             NetConfigurationContainer.AddFacility<LoggingFacility>(f => f.UseLog4Net());
             logger = NetConfigurationContainer.Resolve<Common.ILogger>();
 
-            using (WebSocket socket =  new WebSocket(url: "ws://192.168.254.60:8787", onMessage: OnMessage, onError: OnError))
+            using (WebSocket socket =  new WebSocket(url: "ws://192.168.254.60:8787", onMessage: OnMessage, onError: OnError, onClose: OnClose, onOpen:OnOpen))
             {
                 socket.Connect().Wait();
             }
@@ -39,14 +39,26 @@ namespace GEMC.OBS.Standalone
         private static Task OnError(ErrorEventArgs errorEventArgs)
         {
             //this.logger.Error(this.GetType(), errorEventArgs.Message, errorEventArgs.Exception);
-            Console.Write("Error: {0}, Exception: {1}", errorEventArgs.Message, errorEventArgs.Exception);
+            Console.WriteLine("Error: {0}, Exception: {1}", errorEventArgs.Message, errorEventArgs.Exception);
             return Task.FromResult(0);
         }
 
         private static Task OnMessage(MessageEventArgs messageEventArgs)
         {
             //this.logger.Debug(this.GetType(), messageEventArgs.Text.ReadToEnd());
-            Console.Write("Message received: {0}", messageEventArgs.Text.ReadToEnd());
+            Console.WriteLine("Message received: {0}", messageEventArgs.Text.ReadToEnd());
+            return Task.FromResult(0);
+        }
+
+        private static Task OnClose(CloseEventArgs closeEventArgs)
+        {
+            Console.WriteLine("Socket closed.");
+            return Task.FromResult(0);
+        }
+
+        private static Task OnOpen()
+        {
+            Console.WriteLine("Socket open.");
             return Task.FromResult(0);
         }
     }
