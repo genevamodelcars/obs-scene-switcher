@@ -1,4 +1,6 @@
-﻿#pragma warning disable 618
+﻿using System.Runtime.CompilerServices;
+
+#pragma warning disable 618
 
 namespace GEMC.Standalone
 {
@@ -10,6 +12,7 @@ namespace GEMC.Standalone
     using Castle.Windsor.Installer;
     using GEMC.Common;
     using GEMC.MyRcm.Client;
+    using GEMC.OBS.Client;
     using log4net.Config;
 
     public static class Program
@@ -47,9 +50,9 @@ namespace GEMC.Standalone
 
         private static void OnSceneChanging(object sender, SceneInfoEventArgs e)
         {
-            GEMC.OBS.Client.MessageSender messageSender = new MessageSender();
+            MessageSender messageSender = new MessageSender("localhost","p@ssw0rd");
 
-            sender.SwitchScene(e.Name);
+            messageSender.SwitchScene(e.Name);
         }
     }
 }

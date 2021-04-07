@@ -46,7 +46,6 @@ namespace GEMC.MyRcm.Client
 
             this.HandlesScenicChange(newMessage);
 
-
             this.Messages.Add(newMessage);
             logger.Debug(this.GetType(), json);
             return Task.FromResult(0);
@@ -59,7 +58,7 @@ namespace GEMC.MyRcm.Client
 
         private void HandlesScenicChange(Message newMessage)
         {
-            
+            // TODO: Implements the rules to trigger the change
         }
 
         private Task OnClose(CloseEventArgs closeEventArgs)
