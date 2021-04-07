@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using WebSocketSharp;
 
-namespace GEMC.OBS.Client
+namespace GEMC.MyRcm.Client
 {
     public static class Program
     {

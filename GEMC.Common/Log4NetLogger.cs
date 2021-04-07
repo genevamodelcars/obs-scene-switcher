@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using log4net;
 
-namespace GEMC.OBS.Common
+namespace GEMC.Common
 {
     public class Log4NetLogger : ILogger
     {

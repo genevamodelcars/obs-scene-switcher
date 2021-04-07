@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D010A167-F11F-4527-A7D8-C971A57CCC33}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GEMC.OBS.SceneSwitcher</RootNamespace>
-    <AssemblyName>GEMC.OBS.SceneSwitcher</AssemblyName>
+    <ProjectGuid>{C60D17D1-DC1F-4968-985C-6EC53FBF6B5C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>GEMC.Standalone</RootNamespace>
+    <AssemblyName>GEMC.Standalone</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,25 +32,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  <PropertyGroup>
+    <StartupObject>GEMC.Standalone.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -62,9 +47,6 @@
     </Reference>
     <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\Solutions\packages\Castle.Windsor.5.1.1\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="CLRHost.Interop">
-      <HintPath>..\lib\CLRHost.Interop.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\Solutions\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -85,21 +67,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Plugin.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GEMC.OBS.Client\GEMC.OBS.Client.csproj">
-      <Project>{C19098C5-042A-4B4B-935A-67AFB9E46B66}</Project>
-      <Name>GEMC.OBS.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GEMC.OBS.Common\GEMC.OBS.Common.csproj">
+    <ProjectReference Include="..\GEMC.Common\GEMC.Common.csproj">
       <Project>{734ba398-2e1e-4ab4-9a84-f5f8b667372a}</Project>
-      <Name>GEMC.OBS.Common</Name>
+      <Name>GEMC.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GEMC.MyRcm.Client\GEMC.MyRcm.Client.csproj">
+      <Project>{c19098c5-042a-4b4b-935a-67afb9e46b66}</Project>
+      <Name>GEMC.MyRcm.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GEMC.OBS.Client\GEMC.OBS.Client.csproj">
+      <Project>{d010a167-f11f-4527-a7d8-c971a57ccc33}</Project>
+      <Name>GEMC.OBS.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,7 @@
-﻿namespace GEMC.OBS.Common
-{
-    using System;
+﻿using System;
 
+namespace GEMC.Common
+{
     public interface ILogger
     {
         bool IsDebugEnabled(Type source);

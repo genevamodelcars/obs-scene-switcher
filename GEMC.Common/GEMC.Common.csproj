@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C60D17D1-DC1F-4968-985C-6EC53FBF6B5C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>GEMC.OBS.Standalone</RootNamespace>
-    <AssemblyName>GEMC.OBS.Standalone</AssemblyName>
+    <ProjectGuid>{734BA398-2E1E-4AB4-9A84-F5F8B667372A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GEMC.Common</RootNamespace>
+    <AssemblyName>GEMC.Common</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -48,6 +46,9 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\Solutions\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\Solutions\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -64,22 +65,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="CastleInstaller.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Data.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="Log4NetLogger.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="TimingStatus.cs" />
+    <Compile Include="Metadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Time.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GEMC.OBS.Client\GEMC.OBS.Client.csproj">
-      <Project>{C19098C5-042A-4B4B-935A-67AFB9E46B66}</Project>
-      <Name>GEMC.OBS.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GEMC.OBS.Common\GEMC.OBS.Common.csproj">
-      <Project>{734ba398-2e1e-4ab4-9a84-f5f8b667372a}</Project>
-      <Name>GEMC.OBS.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

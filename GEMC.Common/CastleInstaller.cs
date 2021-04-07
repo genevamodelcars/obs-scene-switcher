@@ -2,7 +2,7 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 
-namespace GEMC.OBS.Common
+namespace GEMC.Common
 {
     // ReSharper disable once UnusedMember.Global
     public class CastleInstaller : IWindsorInstaller

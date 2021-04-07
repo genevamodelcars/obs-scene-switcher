@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GEMC.OBS.Client")]
+[assembly: AssemblyProduct("GEMC.OBS.SceneSwitcher")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c19098c5-042a-4b4b-935a-67afb9e46b66")]
+[assembly: Guid("d010a167-f11f-4527-a7d8-c971a57ccc33")]
 
 // Version information for an assembly consists of the following four values:
 //

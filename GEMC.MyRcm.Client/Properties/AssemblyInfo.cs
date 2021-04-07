@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GEMC.OBS.SceneSwitcher")]
+[assembly: AssemblyTitle("GEMC.OBS.Client")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GEMC.OBS.SceneSwitcher")]
+[assembly: AssemblyProduct("GEMC.OBS.Client")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d010a167-f11f-4527-a7d8-c971a57ccc33")]
+[assembly: Guid("c19098c5-042a-4b4b-935a-67afb9e46b66")]
 
 // Version information for an assembly consists of the following four values:
 //
