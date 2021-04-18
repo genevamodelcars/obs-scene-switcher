@@ -41,6 +41,7 @@
         public string DelayTimeFirst { get; set; }
 
         public string DelayTimePrevious { get; set; }
+
         public string StdDeviation { get; set; }
 
         public string CardId { get; set; }

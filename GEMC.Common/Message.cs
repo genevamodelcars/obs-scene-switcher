@@ -15,6 +15,8 @@
             Message newInstance = JsonConvert.DeserializeObject<Message>(json);
             newInstance.Json = json;
 
+            Time endTime = Time.MaxValue;
+            Time waitTime  = new Time("00:00:10");
             Time divergence = new Time(newInstance.Event.Metadata.Divergence);
 
             if (divergence.Minutes > 3 || divergence.Hours > 0)
@@ -26,15 +28,31 @@
                 Time countdown = new Time(newInstance.Event.Metadata.Countdown);
                 Time current = new Time(newInstance.Event.Metadata.CurrentTime);
                 Time race = new Time(newInstance.Event.Metadata.RaceTime);
+                Time remaining = new Time(newInstance.Event.Metadata.RemainingTime);
+
+                if (countdown.Equals(new Time("00:00:30")))
+                {
+                    endTime = Time.MaxValue;
+                }
 
                 if (countdown.Equals(new Time("00:00:30")) || !current.Equals(race))
                 {
                     newInstance.Status = TimingStatus.RaceRunning;
 
+                    if (remaining.Equals(new Time("00:00:01")))
+                    {
+                        endTime = Time.Now();
+                    }
 
-
+                    if (endTime + waitTime < Time.Now())
+                    {
+                        newInstance.Status = TimingStatus.RaceEnded;
+                    }
                 }
-
+                else
+                {
+                    newInstance.Status = TimingStatus.RacePreparation;
+                }
             }
 
             return newInstance;

@@ -33,24 +33,16 @@ namespace GEMC.Standalone
 
             MessagesListener messagesListener = new MessagesListener("ws://192.168.254.60:8787", logger);
             messagesListener.SceneChanging += OnSceneChanging;
-            
+
             messagesListener.Start();
 
             Console.ReadKey(true);
             messagesListener.Stop();
-
-            if (messagesListener.Messages != null)
-            {
-                foreach (Message message in messagesListener.Messages)
-                {
-                    logger.Info(typeof(Program), $"Orphan message: {message.Json}");
-                }
-            }
         }
 
         private static void OnSceneChanging(object sender, SceneInfoEventArgs e)
         {
-            MessageSender messageSender = new MessageSender("localhost","p@ssw0rd");
+            MessageSender messageSender = new MessageSender("localhost", "p@ssw0rd");
 
             messageSender.SwitchScene(e.Name);
         }
