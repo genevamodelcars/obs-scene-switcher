@@ -1,4 +1,6 @@
-﻿namespace GEMC.MyRcm.Client
+﻿using System.Threading;
+
+namespace GEMC.MyRcm.Client
 {
     using System;
     using System.Threading.Tasks;
@@ -9,13 +11,15 @@
     {
         public EventHandler<SceneInfoEventArgs> SceneChanging;
 
+        private static MessageContainer container;
         private static ILogger logger;
         private WebSocket webSocket;
 
         private Message previousMessage;
 
-        public MessagesListener(string address, ILogger log)
+        public MessagesListener(string address, MessageContainer ctn, ILogger log)
         {
+            container = ctn;
             logger = log;
             this.webSocket = new WebSocket(address, onMessage: OnMessage, onError: OnError, onClose: OnClose, onOpen: OnOpen);
             this.webSocket.WaitTime = TimeSpan.FromMinutes(5);
@@ -34,18 +38,20 @@
         private Task OnError(ErrorEventArgs errorEventArgs)
         {
             logger.Error(this.GetType(), errorEventArgs.Message, errorEventArgs.Exception);
+            Thread.Sleep(8000);
+            this.webSocket.Connect().Wait();
             return Task.FromResult(0);
         }
 
         private Task OnMessage(MessageEventArgs messageEventArgs)
         {
             string json = messageEventArgs.Text.ReadToEnd();
-            Message newMessage = Message.FromJson(json);
+            Message message = Message.FromJson(json);
+            container.UpdateMessage(message);
+            this.HandlesScenicChange(message);
+            this.previousMessage = message;
 
-            this.HandlesScenicChange(newMessage);
-
-            this.previousMessage = newMessage;
-            logger.Debug(this.GetType(), json);
+            logger.Debug(this.GetType(), $"STATUS:{message.Status}, CT:{message.Event.Metadata.Countdown}, CU:{message.Event.Metadata.CurrentTime}, RC:{message.Event.Metadata.RaceTime}, RM:{message.Event.Metadata.RemainingTime}");
             return Task.FromResult(0);
         }
 
@@ -56,7 +62,7 @@
 
         private void HandlesScenicChange(Message newMessage)
         {
-            if (!previousMessage.Status.Equals(newMessage.Status))
+            if (previousMessage == null || !previousMessage.Status.Equals(newMessage.Status))
             {
                 this.OnSceneChanging(newMessage.Status.ToString());
             }

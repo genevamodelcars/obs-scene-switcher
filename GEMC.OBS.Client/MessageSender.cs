@@ -1,5 +1,6 @@
 ﻿namespace GEMC.OBS.Client
 {
+    using System;
     using OBSWebsocketDotNet;
     using GEMC.Common;
 
@@ -10,10 +11,11 @@
         private string url;
         private string password;
 
-        public MessageSender(string url, string password)
+        public MessageSender(string url, string password, ILogger logger)
         {
             this.url = url;
             this.password = password;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.webSocket = new OBSWebsocket();
 
             this.webSocket.Connected += OnConnect;

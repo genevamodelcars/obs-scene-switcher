@@ -5,7 +5,7 @@ using Castle.Windsor;
 namespace GEMC.Common
 {
     // ReSharper disable once UnusedMember.Global
-    public class CastleInstaller : IWindsorInstaller
+    public class LogInstaller : IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {

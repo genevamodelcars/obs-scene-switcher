@@ -15,8 +15,8 @@
             Message newInstance = JsonConvert.DeserializeObject<Message>(json);
             newInstance.Json = json;
 
+            Time waitTime = new Time("00:00:10");
             Time endTime = Time.MaxValue;
-            Time waitTime  = new Time("00:00:10");
             Time divergence = new Time(newInstance.Event.Metadata.Divergence);
 
             if (divergence.Minutes > 3 || divergence.Hours > 0)

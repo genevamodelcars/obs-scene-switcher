@@ -37,7 +37,7 @@
             Seconds = seconds;
         }
 
-        public static Time MaxValue => new Time("99:99:99");
+        public static Time MaxValue => new Time("24:60:60");
 
         public Time AbsoluteValue => new Time(false, this.Hours, this.Minutes, this.Seconds);
 

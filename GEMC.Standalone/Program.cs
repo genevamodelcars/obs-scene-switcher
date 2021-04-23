@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using log4net.Repository.Hierarchy;
 
 #pragma warning disable 618
 
@@ -27,24 +28,24 @@ namespace GEMC.Standalone
 
             NetConfigurationContainer = new WindsorContainer();
             NetConfigurationContainer.Install(Configuration.FromAppConfig());
-            NetConfigurationContainer.Install(new CastleInstaller());
+            NetConfigurationContainer.Install(new LogInstaller());
             NetConfigurationContainer.AddFacility<LoggingFacility>(f => f.UseLog4Net());
             logger = NetConfigurationContainer.Resolve<Common.ILogger>();
 
-            MessagesListener messagesListener = new MessagesListener("ws://192.168.254.60:8787", logger);
-            messagesListener.SceneChanging += OnSceneChanging;
+            //MessagesListener messagesListener = new MessagesListener("ws://192.168.254.60:8787", logger);
+            //messagesListener.SceneChanging += OnSceneChanging;
 
-            messagesListener.Start();
+            //messagesListener.Start();
 
-            Console.ReadKey(true);
-            messagesListener.Stop();
+            //Console.ReadKey(true);
+            //messagesListener.Stop();
         }
 
-        private static void OnSceneChanging(object sender, SceneInfoEventArgs e)
-        {
-            MessageSender messageSender = new MessageSender("localhost", "p@ssw0rd");
+        //private static void OnSceneChanging(object sender, SceneInfoEventArgs e)
+        //{
+        //    MessageSender messageSender = new MessageSender("localhost", "p@ssw0rd", Logger);
 
-            messageSender.SwitchScene(e.Name);
-        }
+        //    messageSender.SwitchScene(e.Name);
+        //}
     }
 }

@@ -65,13 +65,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CastleInstaller.cs" />
+    <Compile Include="LogInstaller.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Log4NetLogger.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="MessageContainer.cs" />
     <Compile Include="TimingStatus.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
