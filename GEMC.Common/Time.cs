@@ -12,6 +12,12 @@
                 text = text.Substring(1);
             }
 
+            if (text.StartsWith("+"))
+            {
+                this.IsNegative = false;
+                text = text.Substring(1);
+            }
+
             string[] tokens = text.Split(':');
 
             if (tokens.Length != 3)
@@ -38,6 +44,8 @@
         }
 
         public static Time MaxValue => new Time("24:60:60");
+
+        public static Time Zero => new Time("00:00:00");
 
         public Time AbsoluteValue => new Time(false, this.Hours, this.Minutes, this.Seconds);
 
@@ -324,7 +332,7 @@
 
         public static bool operator >(Time a, Time b)
         {
-            return !(a < b);
+            return !(a < b) && !a.Equals(b);
         }
 
         public static bool operator <=(Time a, Time b)
@@ -345,6 +353,21 @@
             }
 
             return a > b;
+        }
+
+        public static bool operator ==(Time a, Time b)
+        {
+            if (object.ReferenceEquals(null, a))
+            {
+                return object.ReferenceEquals(null, b);
+            }
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Time a, Time b)
+        {
+            return !(a == b);
         }
 
         public bool Equals(Time other)

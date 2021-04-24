@@ -50,12 +50,10 @@
                 catch (AuthFailureException ex)
                 {
                     logger.Error(this.GetType(), "There was an authentication exception", ex);
-                    return;
                 }
                 catch (ErrorResponseException ex)
                 {
                     logger.Error(this.GetType(), "There was a communication exception", ex);
-                    return;
                 }
             }
         }

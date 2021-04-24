@@ -23,6 +23,15 @@
             return this.Ok(container.GetMessage());
         }
 
+        [Route("metadata")]
+        [HttpGet]
+        public IHttpActionResult GetMetadata()
+        {
+            MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
+
+            return this.Ok(container.GetMessage().Event.Metadata);
+        }
+
         [Route("remaining")]
         [HttpGet]
         public IHttpActionResult GetRemainingTime()
@@ -39,6 +48,15 @@
             MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
 
             return this.Ok(container.GetMessage().Status);
+        }
+
+        [Route("raceresult")]
+        [HttpGet]
+        public IHttpActionResult GetRaceResult()
+        {
+            MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
+
+            return this.Ok(container.GetRaceResultMessage());
         }
     }
 }

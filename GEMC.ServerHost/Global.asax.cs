@@ -15,6 +15,7 @@ namespace GEMC.ServerHost
     {
         internal static ILogger Logger;
         internal static MessagesListener MessagesListener;
+        internal static MessageContainer Container;
 
         protected void Application_Start(object sender, EventArgs e)
         {
@@ -26,14 +27,14 @@ namespace GEMC.ServerHost
 
             Logger = WindsorConfiguration.Container.Resolve<ILogger>();
 
-            MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
+            Container = WindsorConfiguration.Container.Resolve<MessageContainer>();
 
-            MessagesListener = new MessagesListener("ws://192.168.254.60:8787", container, Logger);
+            MessagesListener = new MessagesListener("ws://192.168.254.60:8787", Container, Logger);
             MessagesListener.SceneChanging += OnSceneChanging;
 
             MessagesListener.Start();
 
-            Logger.Info(this.GetType(),"Server started");
+            Logger.Info(this.GetType(), "Server started");
         }
 
         protected void Session_Start(object sender, EventArgs e)
@@ -42,6 +43,7 @@ namespace GEMC.ServerHost
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
+
         }
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)

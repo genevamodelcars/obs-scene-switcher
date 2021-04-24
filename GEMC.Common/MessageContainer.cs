@@ -3,18 +3,21 @@
     public class MessageContainer
     {
         private readonly object messageLocker = new object();
-        private Message message;
+        private readonly object raceMessageLocker = new object();
+        private Message currentMessage;
+        private Message raceResultMessage;
 
         public MessageContainer()
         {
-            this.message = new Message();
+            this.currentMessage = new Message();
+            this.raceResultMessage = new Message();
         }
         
         public Message GetMessage()
         {
             lock (messageLocker)
             {
-                return this.message;
+                return this.currentMessage;
             }
         }
 
@@ -22,7 +25,23 @@
         {
             lock (messageLocker)
             {
-                this.message = msg;
+                this.currentMessage = msg;
+            }
+        }
+
+        public void SaveAsRaceResultMessage(Message msg)
+        {
+            lock (raceMessageLocker)
+            {
+                this.raceResultMessage = msg;
+            }
+        }
+
+        public Message GetRaceResultMessage()
+        {
+            lock (raceMessageLocker)
+            {
+                return this.raceResultMessage;
             }
         }
     }

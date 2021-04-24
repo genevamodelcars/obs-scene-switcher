@@ -2,6 +2,8 @@
 {
     public class Data
     {
+        // TODO : Add difference from previous car (laps or cars)
+
         public int Color { get; set; }
 
         public int Index { get; set; }
@@ -13,6 +15,8 @@
         public int? Transponder { get; set; }
 
         public string Pilot { get; set; }
+
+        public string Initials { get; set; }
 
         public string Club { get; set; }
 
