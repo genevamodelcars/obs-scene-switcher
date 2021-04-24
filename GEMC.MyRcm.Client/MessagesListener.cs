@@ -51,7 +51,7 @@ namespace GEMC.MyRcm.Client
             this.HandlesScenicChange(message);
             this.previousMessage = message;
 
-            logger.Debug(this.GetType(), $"STATUS:{message.Status}, CT:{message.Event.Metadata.Countdown}, CU:{message.Event.Metadata.CurrentTime}, RC:{message.Event.Metadata.RaceTime}, RM:{message.Event.Metadata.RemainingTime}");
+            logger.Debug(this.GetType(), $"STATUS:{message.Status}, CT:{message.Event.Metadata.Countdown}, CU:{message.Event.Metadata.CurrentTime}, RC:{message.Event.Metadata.RaceTime}, RM:{message.Event.Metadata.RemainingTime}, DV:{message.Event.Metadata.Divergence}");
             return Task.FromResult(0);
         }
 
