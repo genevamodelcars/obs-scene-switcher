@@ -1,20 +1,20 @@
-﻿namespace GEMC.ServerHost.Controllers
-{
-    using System.Reflection;
-    using System.Web.Http;
-    using GEMC.Common;
+﻿using System.Reflection;
+using System.Web.Http;
+using GEMC.Common;
 
-    [RoutePrefix("api")]
-    public class MessageController : ApiController
+namespace GEMC.ServiceHost
+{
+    [RoutePrefix("api/data")]
+    public class DataController : ApiController
     {
-        [Route("info")]
+        [ActionName("info")]
         [HttpGet]
         public IHttpActionResult GetApiInfo()
         {
             return this.Ok(Assembly.GetExecutingAssembly().GetName().Version.ToString());
         }
 
-        [Route("message")]
+        [ActionName("message")]
         [HttpGet]
         public IHttpActionResult GetMessage()
         {
@@ -23,7 +23,7 @@
             return this.Ok(container.GetMessage());
         }
 
-        [Route("metadata")]
+        [ActionName("metadata")]
         [HttpGet]
         public IHttpActionResult GetMetadata()
         {
@@ -32,7 +32,7 @@
             return this.Ok(container.GetMessage().Event.Metadata);
         }
 
-        [Route("remaining")]
+        [ActionName("remaining")]
         [HttpGet]
         public IHttpActionResult GetRemainingTime()
         {
@@ -41,18 +41,27 @@
             return this.Ok(container.GetMessage().Event.Metadata.RemainingTime);
         }
 
-        [Route("racestatus")]
+        [ActionName("racestatus")]
         [HttpGet]
         public IHttpActionResult GetRaceStatus()
         {
             MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
 
-            return this.Ok(container.GetMessage().Status);
+            return this.Ok(container.GetMessage().Status.ToString());
         }
 
-        [Route("raceresult")]
+        [ActionName("raceresult")]
         [HttpGet]
-        public IHttpActionResult GetRaceResult()
+        public IHttpActionResult GetPreviousRaceData()
+        {
+            MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
+
+            return this.Ok(container.GetPreviousRaceMessage());
+        }
+
+        [ActionName("nextracedata")]
+        [HttpGet]
+        public IHttpActionResult GetNextRaceData()
         {
             MessageContainer container = WindsorConfiguration.Container.Resolve<MessageContainer>();
 

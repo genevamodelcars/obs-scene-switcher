@@ -10,10 +10,15 @@ namespace GEMC.Common
 
         public TimingStatus Status { get; set; }
 
-        public DisplayStatus DisplayStatus { get; set; }
         public DateTime TimeStamp { get; set; }
 
         public Event Event { get; set; }
+
+        public bool IsStart { get; set; }
+
+        public bool IsEnd { get; set; }
+
+        public bool IsOneMinuteBefore { get; set; }
         
         public static Message FromJson(string json)
         {
@@ -27,6 +32,8 @@ namespace GEMC.Common
             Time raceTime = new Time(newInstance.Event.Metadata.RaceTime);
             Time remainingTime = new Time(newInstance.Event.Metadata.RemainingTime);
 
+
+
             if (countDown.Equals(Time.Zero)
                 && currentTime >= Time.Zero
                 && currentTime < raceDuration
@@ -36,117 +43,20 @@ namespace GEMC.Common
             {
                 newInstance.Status = TimingStatus.RaceRunning;
             }
-            else if (countDown > Time.Zero
-                     && currentTime.Equals(Time.Zero)
-                     && raceTime.Equals(raceDuration)
-                     && remainingTime.Equals(raceDuration))
-            {
-                newInstance.Status = TimingStatus.BetweenRaces;
-            }
             else if (countDown.Equals(Time.Zero)
                      && currentTime.Equals(raceDuration)
                      && raceTime.Equals(raceDuration)
                      && remainingTime >= Time.Zero
                      && remainingTime < waitTime)
             {
-                newInstance.Status = TimingStatus.RaceEnding;
+                newInstance.Status = TimingStatus.RaceEnded;
             }
-            else
+            else 
             {
-                newInstance.Status = TimingStatus.NoData;
+                newInstance.Status = TimingStatus.BetweenRaces;
             }
 
             return newInstance;
         }
     }
 }
-
-//Time waitTime = new Time("00:00:10");
-//Time endTime = Time.MaxValue;
-//Time divergence = new Time(newInstance.Event.Metadata.Divergence);
-
-//if (divergence.Minutes > 3 || divergence.Hours > 0)
-//{
-//newInstance.Status = TimingStatus.NextRaceSchedule;
-//}
-//else
-//{
-//Time countdown = new Time(newInstance.Event.Metadata.Countdown);
-//Time current = new Time(newInstance.Event.Metadata.CurrentTime);
-//Time race = new Time(newInstance.Event.Metadata.RaceTime);
-//Time remaining = new Time(newInstance.Event.Metadata.RemainingTime);
-
-//    if (countdown.Equals(new Time("00:00:30")))
-//{
-//    endTime = Time.MaxValue;
-//}
-
-//if (countdown.Equals(new Time("00:00:30")) || !current.Equals(race))
-//{
-//    newInstance.Status = TimingStatus.RaceRunning;
-
-//    if (remaining.Equals(new Time("00:00:01")))
-//    {
-//        endTime = Time.Now();
-//    }
-
-//    if (endTime + waitTime<Time.Now())
-//    {
-//        newInstance.Status = TimingStatus.RaceEnded;
-//    }
-//}
-//else
-//{
-//    newInstance.Status = TimingStatus.RacePreparation;
-//}
-//}
-
-
-
-
-
-
-
-
-
-/*
-0 = standby
-1 = nextrace schedule
-2 = race preparation
-3 = race running
-4 = race ended
-*/
-
-//var now = Date.now();
-
-//if (data.EVENT.METADATA.DIVERGENCE.split(":")[1] > 3 || data.EVENT.METADATA.DIVERGENCE.split(":")[0] > 0) 
-//{
-//  timingstatus = 1;
-//  endtime = 9582744014867;
-//}
-//else 
-//{
-//  if (data.EVENT.METADATA.COUNTDOWN == "00:00:30") 
-//  {
-//    endtime = 9582744014867;
-//  }
-
-//  if (data.EVENT.METADATA.COUNTDOWN == "00:00:30" || data.EVENT.METADATA.CURRENTIME != data.EVENT.METADATA.RACETIME) 
-//  {
-//    timingstatus = 3;
-
-//    if (data.EVENT.METADATA.REMAININGTIME == "00:00:01") 
-//    {
-//        endtime = Date.now();
-//    }
-
-//    if (now> endtime + waittime) 
-//    {
-//        timingstatus = 4;
-//    }
-//  }
-//  else 
-//  {
-//    timingstatus = 2;
-//  }
-//}

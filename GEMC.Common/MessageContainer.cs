@@ -3,14 +3,16 @@
     public class MessageContainer
     {
         private readonly object messageLocker = new object();
-        private readonly object raceMessageLocker = new object();
+        private readonly object previousRaceMessageLocker = new object();
+        private readonly object nextRaceMessageLocker = new object();
         private Message currentMessage;
-        private Message raceResultMessage;
+        private Message previousRaceResultMessage;
+        private Message nextRaceResultMessage;
 
         public MessageContainer()
         {
             this.currentMessage = new Message();
-            this.raceResultMessage = new Message();
+            this.previousRaceResultMessage = new Message();
         }
         
         public Message GetMessage()
@@ -29,19 +31,35 @@
             }
         }
 
-        public void SaveAsRaceResultMessage(Message msg)
+        public void SaveAsPreviousRaceResult(Message msg)
         {
-            lock (raceMessageLocker)
+            lock (previousRaceMessageLocker)
             {
-                this.raceResultMessage = msg;
+                this.previousRaceResultMessage = msg;
             }
         }
 
-        public Message GetRaceResultMessage()
+        public void SaveAsNextRaceInfo(Message msg)
         {
-            lock (raceMessageLocker)
+            lock (nextRaceMessageLocker)
             {
-                return this.raceResultMessage;
+                this.nextRaceResultMessage = msg;
+            }
+        }
+
+        public Message GetPreviousRaceMessage()
+        {
+            lock (previousRaceMessageLocker)
+            {
+                return this.previousRaceResultMessage;
+            }
+        }
+
+        public Message GetNextRaceMessage()
+        {
+            lock (nextRaceMessageLocker)
+            {
+                return this.nextRaceResultMessage;
             }
         }
     }

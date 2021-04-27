@@ -65,6 +65,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ISceneManager.cs" />
     <Compile Include="LogInstaller.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Data.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Log4NetLogger.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageContainer.cs" />
+    <Compile Include="SceneInfo.cs" />
     <Compile Include="TimingStatus.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

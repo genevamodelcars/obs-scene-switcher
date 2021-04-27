@@ -1,63 +1,28 @@
 ﻿namespace GEMC.OBS.Client
 {
     using System;
-    using OBSWebsocketDotNet;
     using GEMC.Common;
 
     public class MessageSender
     {
         private ILogger logger;
-        private OBSWebsocket webSocket;
-        private string url;
-        private string password;
+        private readonly ISceneManager manager;
 
-        public MessageSender(string url, string password, ILogger logger)
+
+        public MessageSender( ILogger logger, ISceneManager manager)
         {
-            this.url = url;
-            this.password = password;
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.webSocket = new OBSWebsocket();
-
-            this.webSocket.Connected += OnConnect;
-            this.webSocket.Disconnected += OnDisconnect; ;
+            this.manager = manager;
         }
 
-        public void SwitchScene(string sceneName)
+        public void SwitchScene(string newSceneName)
         {
-            this.EnsuresConnection();
-
-            this.webSocket.SetCurrentScene(sceneName);
+            this.manager.SwitchScene(newSceneName);
         }
 
-        private void OnDisconnect(object sender, System.EventArgs e)
+        public string GetCurrentScene()
         {
-
+            return this.manager.GetCurrentScene();
         }
-
-        private void OnConnect(object sender, System.EventArgs e)
-        {
-
-        }
-
-        private void EnsuresConnection()
-        {
-            if (!this.webSocket.IsConnected)
-            {
-                try
-                {
-                    webSocket.Connect(this.url, this.password);
-                }
-                catch (AuthFailureException ex)
-                {
-                    logger.Error(this.GetType(), "There was an authentication exception", ex);
-                }
-                catch (ErrorResponseException ex)
-                {
-                    logger.Error(this.GetType(), "There was a communication exception", ex);
-                }
-            }
-        }
-
-
     }
 }

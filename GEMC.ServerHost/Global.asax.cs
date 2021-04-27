@@ -1,8 +1,7 @@
-﻿using System.IO;
-using log4net.Config;
-
-namespace GEMC.ServerHost
+﻿namespace GEMC.ServerHost
 {
+    using System.IO;
+    using log4net.Config;
     using System;
     using System.Web.Http;
     using System.Reflection;
@@ -15,6 +14,7 @@ namespace GEMC.ServerHost
     {
         internal static ILogger Logger;
         internal static MessagesListener MessagesListener;
+        internal static MessageSender MessageSender;
         internal static MessageContainer Container;
 
         protected void Application_Start(object sender, EventArgs e)
@@ -25,12 +25,11 @@ namespace GEMC.ServerHost
 
             WindsorConfiguration.Register(GlobalConfiguration.Configuration);
 
-            Logger = WindsorConfiguration.Container.Resolve<ILogger>();
-
-            Container = WindsorConfiguration.Container.Resolve<MessageContainer>();
-
-            MessagesListener = new MessagesListener("ws://192.168.254.60:8787", Container, Logger);
+            MessageSender = WindsorConfiguration.Container.Resolve<MessageSender>();
+            
+            MessagesListener = WindsorConfiguration.Container.Resolve<MessagesListener>();
             MessagesListener.SceneChanging += OnSceneChanging;
+
 
             MessagesListener.Start();
 
@@ -65,9 +64,7 @@ namespace GEMC.ServerHost
 
         private static void OnSceneChanging(object sender, SceneInfoEventArgs e)
         {
-            MessageSender messageSender = new MessageSender("ws://localhost:4444", "p@ssw0rd", Logger);
-
-            messageSender.SwitchScene(e.Name);
+            MessageSender.SwitchScene(e.Name);
         }
     }
 }

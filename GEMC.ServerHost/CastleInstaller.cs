@@ -1,4 +1,6 @@
-﻿namespace GEMC.ServerHost
+﻿using GEMC.OBS.Client;
+
+namespace GEMC.ServerHost
 {
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.SubSystems.Configuration;
@@ -9,7 +11,10 @@
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Component.For<MessageContainer>().LifestyleSingleton());
+            container.Register(
+                Component.For<MessageContainer>().LifestyleSingleton(),
+                Component.For<MessageSender>().LifestyleTransient());
+
         }
     }
 }

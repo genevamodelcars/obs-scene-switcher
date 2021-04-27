@@ -56,7 +56,7 @@
         public int Minutes { get; set; }
 
         public int Seconds { get; set; }
-        
+
         public static Time Now()
         {
             string now = DateTime.Now.ToString("HH:mm:ss");
@@ -370,6 +370,18 @@
             return !(a == b);
         }
 
+        public long ToMilliSeconds()
+        {
+            long result = (this.Seconds + 60 * this.Minutes + 3600 * this.Hours) * 1000;
+
+            if (this.IsNegative)
+            {
+                result = -1 * result;
+            }
+
+            return result;
+        }
+
         public bool Equals(Time other)
         {
             if (other == null) return false;
@@ -397,6 +409,12 @@
                 hashCode = (hashCode * 397) ^ Seconds;
                 return hashCode;
             }
+        }
+
+        public override string ToString()
+        {
+            string sign = this.IsNegative ? "-" : "";
+            return $"{sign}{this.Hours}:{this.Minutes}:{this.Seconds}";
         }
     }
 }

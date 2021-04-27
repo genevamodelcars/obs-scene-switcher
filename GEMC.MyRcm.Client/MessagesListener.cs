@@ -1,54 +1,59 @@
-﻿using System.ComponentModel;
-using System.Threading;
-
-namespace GEMC.MyRcm.Client
+﻿namespace GEMC.MyRcm.Client
 {
     using System;
     using System.Threading.Tasks;
-    using GEMC.Common;
+    using Common;
     using WebSocketSharp;
-    using Timer = System.Timers.Timer;
+    using System.Threading;
 
     public class MessagesListener : IDisposable
     {
-        public EventHandler<SceneInfoEventArgs> SceneChanging;
+        public EventHandler<DataEventArgs> RaceStarted;
+        public EventHandler<DataEventArgs> RaceEnded;
+        public EventHandler<DataEventArgs> OneMinuteBeforeStart;
+        public EventHandler<DataEventArgs> MessageReceived;
 
         private static MessageContainer container;
         private static ILogger logger;
+        private static Time NextRaceTableDelay;
+
+        private readonly Configuration configuration;
+
         private WebSocket webSocket;
-
-        private static Time RaceDuration;
-        private static Time TenSecondsDelay;
-        private static Time TwentySecondsDelay;
-        private static Time ThreeMinutesDelay;
-
         private Message previousMessage;
-        private string lastAskedScene;
 
-        private Time endRaceTime;
-
-        public MessagesListener(string address, MessageContainer ctn, ILogger log)
+        public MessagesListener(MessageContainer container, ILogger logger, Configuration configuration)
         {
-            container = ctn;
-            logger = log;
-            this.webSocket = new WebSocket(address, onMessage: OnMessage, onError: OnError, onClose: OnClose, onOpen: OnOpen);
-            this.webSocket.WaitTime = TimeSpan.FromMinutes(5);
+            MessagesListener.container = container;
+            MessagesListener.logger = logger;
+            this.configuration = configuration;
+            this.webSocket = new WebSocket(this.configuration.RcmWebSocketUrl, onMessage: OnMessage, onError: OnError, onClose: OnClose, onOpen: OnOpen);
+            this.webSocket.WaitTime = TimeSpan.FromMinutes(10);
 
-            RaceDuration = new Time("00:05:00");
-            TenSecondsDelay = new Time("00:00:10");
-            TwentySecondsDelay = new Time("00:00:20");
-            ThreeMinutesDelay = new Time("00:01:15");
-
+            NextRaceTableDelay = new Time(this.configuration.NextRaceTableDelay);
         }
 
         public void Start()
         {
             this.webSocket.Connect().Wait();
+            logger.Info(typeof(Program), $"RCM SocketListener connected to {this.configuration.RcmWebSocketUrl}");
         }
 
         public void Stop()
         {
             this.webSocket.Close(CloseStatusCode.Normal).Wait();
+        }
+
+        private Task OnClose(CloseEventArgs closeEventArgs)
+        {
+            logger.Info(this.GetType(), "Socket closed.");
+            return Task.FromResult(0);
+        }
+
+        private Task OnOpen()
+        {
+            logger.Info(this.GetType(), "Socket open.");
+            return Task.FromResult(0);
         }
 
         private Task OnError(ErrorEventArgs errorEventArgs)
@@ -62,111 +67,81 @@ namespace GEMC.MyRcm.Client
         private Task OnMessage(MessageEventArgs messageEventArgs)
         {
             string json = messageEventArgs.Text.ReadToEnd();
-            Message message = Message.FromJson(json);
-            container.UpdateMessage(message);
-            logger.Debug(this.GetType(), $"TIMESTAMP:{message.TimeStamp.ToString("HH:mm:ss")} STATUS:{message.Status}, CT:{message.Event.Metadata.Countdown}, CU:{message.Event.Metadata.CurrentTime}, RC:{message.Event.Metadata.RaceTime}, RM:{message.Event.Metadata.RemainingTime}, DV:{message.Event.Metadata.Divergence}");
-            this.HandlesChanges(message);
-            this.previousMessage = message;
+            Message newMessage = Message.FromJson(json);
+            container.UpdateMessage(newMessage);
+            logger.Debug(this.GetType(), $"TIMESTAMP:{newMessage.TimeStamp.ToString("HH:mm:ss")} STATUS:{newMessage.Status}, Countdown:{newMessage.Event.Metadata.Countdown}, CurrentTime:{newMessage.Event.Metadata.CurrentTime}, RaceTime:{newMessage.Event.Metadata.RaceTime}, RemainingTime:{newMessage.Event.Metadata.RemainingTime}, Divergence:{newMessage.Event.Metadata.Divergence}");
+                               
+            this.HandleEvents(this.previousMessage, newMessage);
 
-            
+            this.previousMessage = newMessage;
             return Task.FromResult(0);
         }
 
-        public void OnSceneChanging(string text)
+        private void OnRaceStarted(Message message)
         {
-            this.SceneChanging?.Invoke(this, new SceneInfoEventArgs(text));
+            this.RaceStarted?.Invoke(this, new DataEventArgs(message, null));
         }
 
-        private void HandlesChanges(Message newMessage)
+        private void OnRaceEnded(Message message, Message previousMessage)
         {
+            this.RaceEnded?.Invoke(this, new DataEventArgs(message, previousMessage));
+        }
+
+        private void OnOneMinuteBeforeStart(Message message)
+        {
+            this.OneMinuteBeforeStart?.Invoke(this, new DataEventArgs(message, null));
+        }
+
+        private void OnMessageReceived(Message message)
+        {
+            this.MessageReceived?.Invoke(this, new DataEventArgs(message, null));
+        }
+
+        private void HandleEvents(Message message, Message newMessage)
+        {
+            // Handling the first message
             if (previousMessage == null)
             {
                 return;
             }
 
+            this.OnMessageReceived(newMessage);
+            
             Time countDown = new Time(newMessage.Event.Metadata.Countdown);
 
-            if (newMessage.Status == TimingStatus.BetweenRaces && previousMessage.Status == TimingStatus.RaceEnding)
+            // Race ended case
+            if (newMessage.Status == TimingStatus.BetweenRaces && previousMessage.Status == TimingStatus.RaceEnded)
             {
-                //TODO: result grid between eor+15 to eor+45
-                container.SaveAsRaceResultMessage(this.previousMessage);
-                newMessage.DisplayStatus = DisplayStatus.ResultGridDisplayed;
-                logger.Debug(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE ENDED, using {newMessage.DisplayStatus}");
-                this.SwitchSceneIfNeeded(newMessage);
+                container.SaveAsPreviousRaceResult(this.previousMessage);
+                container.SaveAsNextRaceInfo(newMessage);
+
+                logger.Info(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE ENDED");
+
+                this.OnRaceEnded(newMessage, this.previousMessage);
+
                 this.previousMessage = newMessage;
-                return;
-
             }
 
-            if (newMessage.Status == TimingStatus.BetweenRaces && countDown < ThreeMinutesDelay && countDown > TwentySecondsDelay)
+            // Race started
+            if (newMessage.Status == TimingStatus.RaceRunning && previousMessage.Status == TimingStatus.BetweenRaces)
             {
-                newMessage.DisplayStatus = DisplayStatus.ResultGridDisplayed;
-                logger.Debug(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE PREPARATION, using {newMessage.DisplayStatus}");
-                this.SwitchSceneIfNeeded(newMessage);
+                logger.Info(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE STARTED");
+
+                this.OnRaceStarted(newMessage);
+
                 this.previousMessage = newMessage;
-                return;
             }
 
-            if (newMessage.Status == TimingStatus.BetweenRaces && countDown > Time.Zero && countDown < TwentySecondsDelay)
+            // One minute before start
+            if (newMessage.Status == TimingStatus.BetweenRaces && countDown == NextRaceTableDelay)
             {
-                newMessage.DisplayStatus = DisplayStatus.RaceGridDisplayed;
-                logger.Debug(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE START IMMINENT, using {newMessage.DisplayStatus}");
-                this.SwitchSceneIfNeeded(newMessage);
+                logger.Info(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE START in {NextRaceTableDelay}");
+
+                this.OnOneMinuteBeforeStart(newMessage);
+
                 this.previousMessage = newMessage;
-                return;
-            }
-            
-            if (newMessage.Status == TimingStatus.RaceRunning || newMessage.Status == TimingStatus.RaceEnding)
-            {
-                newMessage.DisplayStatus = DisplayStatus.RaceGridDisplayed;
-                logger.Debug(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE IN PROGRESS, using {newMessage.DisplayStatus}");
-                this.SwitchSceneIfNeeded(newMessage);
-                this.previousMessage = newMessage;
-                return;
             }
 
-            Time divergence = new Time(newMessage.Event.Metadata.Divergence);
-
-            if (newMessage.Status == TimingStatus.BetweenRaces && divergence > ThreeMinutesDelay)
-            {
-                newMessage.DisplayStatus = DisplayStatus.NothingDisplayed;
-                logger.Debug(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: WAITING FOR NEXT RACE, using {newMessage.DisplayStatus}");
-                this.SwitchSceneIfNeeded(newMessage);
-                this.previousMessage = newMessage;
-                return;
-            }
-            
-            this.previousMessage = newMessage;
-            logger.Debug(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: SOMETHING STRANGE HAPPENING!");
-        }
-
-        private void SwitchSceneIfNeeded(Message newMessage)
-        {
-            if (string.IsNullOrEmpty(this.lastAskedScene))
-            {
-                this.OnSceneChanging(newMessage.DisplayStatus.ToString());
-                this.lastAskedScene = newMessage.DisplayStatus.ToString();
-                logger.Info(this.GetType(), $"Scene switch to {newMessage.DisplayStatus}");
-            }
-
-            if (!newMessage.DisplayStatus.ToString().Equals(this.lastAskedScene))
-            {
-                this.OnSceneChanging(newMessage.DisplayStatus.ToString());
-                this.lastAskedScene = newMessage.DisplayStatus.ToString();
-                logger.Info(this.GetType(), $"Scene switched to {newMessage.DisplayStatus}");
-            }
-        }
-
-        private Task OnClose(CloseEventArgs closeEventArgs)
-        {
-            logger.Info(this.GetType(), "Socket closed.");
-            return Task.FromResult(0);
-        }
-
-        private Task OnOpen()
-        {
-            logger.Info(this.GetType(), "Socket open.");
-            return Task.FromResult(0);
         }
 
         public void Dispose()
