@@ -10,7 +10,7 @@
     {
         public EventHandler<DataEventArgs> RaceStarted;
         public EventHandler<DataEventArgs> RaceEnded;
-        public EventHandler<DataEventArgs> OneMinuteBeforeStart;
+        public EventHandler<DataEventArgs> PresentationBeforeStart;
         public EventHandler<DataEventArgs> MessageReceived;
 
         private static MessageContainer container;
@@ -87,9 +87,9 @@
             this.RaceEnded?.Invoke(this, new DataEventArgs(message, previousMessage));
         }
 
-        private void OnOneMinuteBeforeStart(Message message)
+        private void OnPresentationBeforeStart(Message message)
         {
-            this.OneMinuteBeforeStart?.Invoke(this, new DataEventArgs(message, null));
+            this.PresentationBeforeStart?.Invoke(this, new DataEventArgs(message, null));
         }
 
         private void OnMessageReceived(Message message)
@@ -137,7 +137,7 @@
             {
                 logger.Info(this.GetType(), $"{newMessage.TimeStamp.ToString("HH:mm:ss")}: RACE START in {NextRaceTableDelay}");
 
-                this.OnOneMinuteBeforeStart(newMessage);
+                this.OnPresentationBeforeStart(newMessage);
 
                 this.previousMessage = newMessage;
             }

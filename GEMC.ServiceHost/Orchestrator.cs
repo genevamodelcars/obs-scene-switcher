@@ -30,7 +30,7 @@
         public void Start()
         {
             // Start RCM listener
-            this.listener.OneMinuteBeforeStart += OneMinuteBeforeStart;
+            this.listener.PresentationBeforeStart += PresentationBeforeStart;
             this.listener.RaceStarted += RaceStarted;
             this.listener.RaceEnded += RaceEnded;
             this.listener.MessageReceived += MessageReceived;
@@ -80,11 +80,11 @@
             this.listener.RaceStarted += RaceStarted;
         }
 
-        private void OneMinuteBeforeStart(object o, DataEventArgs e)
+        private void PresentationBeforeStart(object o, DataEventArgs e)
         {
-            this.listener.OneMinuteBeforeStart -= OneMinuteBeforeStart;
+            this.listener.PresentationBeforeStart -= PresentationBeforeStart;
 
-            SceneInfo OneMinuteBeforeStartSceneInfo = this.configuration.SceneInfos.FirstOrDefault(si => si.Case.Equals("OneMinuteBeforeStart", StringComparison.InvariantCultureIgnoreCase));
+            SceneInfo OneMinuteBeforeStartSceneInfo = this.configuration.SceneInfos.FirstOrDefault(si => si.Case.Equals("PresentationBeforeStart", StringComparison.InvariantCultureIgnoreCase));
             SceneInfo emptySceneInfo = this.configuration.SceneInfos.FirstOrDefault(si => si.Case.Equals("Empty", StringComparison.InvariantCultureIgnoreCase));
 
             if (OneMinuteBeforeStartSceneInfo != null && emptySceneInfo != null)
@@ -99,14 +99,14 @@
         {
             string sceneName = state.ToString();
             this.sender.SwitchScene(sceneName);
-            this.listener.OneMinuteBeforeStart += OneMinuteBeforeStart;
+            this.listener.PresentationBeforeStart += PresentationBeforeStart;
             this.timer = null;
         }
 
         public void Stop()
         {
             this.listener.Stop();
-            this.listener.OneMinuteBeforeStart -= OneMinuteBeforeStart;
+            this.listener.PresentationBeforeStart -= PresentationBeforeStart;
             this.listener.RaceStarted -= RaceStarted;
             this.listener.RaceEnded -= RaceEnded;
 
